@@ -1,34 +1,36 @@
-<skuidpage showsidebar="true" showheader="true">
+<skuidpage showsidebar="true" showheader="true" unsavedchangeswarning="">
    <resources>
       <labels/>
       <javascript/>
       <css/>
    </resources>
    <models>
-      <model id="Opportunity" limit="100" query="true" createrowifnonefound="false" orderby="" sobject="Opportunity" type="aggregate">
+      <model id="Opportunity" limit="100" query="true" createrowifnonefound="false" orderby="" sobject="Opportunity" type="aggregate" doclone="">
          <fields>
             <field id="Amount" name="sumAmount" function="SUM"/>
             <field id="Amount" name="avgAmount" function="AVG"/>
          </fields>
          <conditions>
-            <condition type="fieldvalue" value="" enclosevalueinquotes="false" field="CloseDate" operator="=" state="filterableoff" inactive="true" name="CloseDate"/>
+            <condition type="fieldvalue" value="" enclosevalueinquotes="false" field="CloseDate" state="filterableoff" inactive="true" name="CloseDate"/>
             <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="OwnerId" state="filterableoff" inactive="true" name="OwnerId"/>
-            <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="Account.Industry" state="filterableoff" inactive="true" name="Account.Industry"/>
-            <condition type="userinfo" value="" field="OwnerId" operator="=" enclosevalueinquotes="true" userinfotype="userid" state="filterableoff" inactive="true" name="OwnerId_ME"/>
-            <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="StageName" state="filterableoff" inactive="true" name="StageName"/>
+            <condition type="userinfo" value="" field="OwnerId" operator="=" enclosevalueinquotes="true" userinfotype="userid" state="filterableoff" inactive="true" name="MINE"/>
+            <condition type="fieldvalue" field="Account.Industry" operator="=" inactive="true" enclosevalueinquotes="true" name="__autofilter__Account.Industry" state="filterableoff" value=""/>
          </conditions>
          <groupby method="simple">
             <field id="StageName" name="stageName"/>
          </groupby>
+         <actions/>
       </model>
-      <model id="OppOwners" limit="100" query="true" createrowifnonefound="false" orderby="LastModifiedDate DESC" sobject="User">
+      <model id="OppOwners" limit="100" query="true" createrowifnonefound="false" orderby="LastModifiedDate DESC" sobject="User" doclone="" type="">
          <fields>
             <field id="Name"/>
             <field id="Id"/>
          </fields>
          <conditions>
+            <condition type="join" value="" field="Id" operator="in" enclosevalueinquotes="true" joinobject="Opportunity" joinfield="OwnerId"/>
             <condition type="userinfo" value="" field="Id" operator="!=" enclosevalueinquotes="true" userinfotype="userid"/>
          </conditions>
+         <actions/>
       </model>
    </models>
    <components>
@@ -37,16 +39,19 @@
          <actions/>
          <subtitle>Report</subtitle>
       </pagetitle>
-      <skootable showconditions="true" showsavecancel="false" searchmethod="server" searchbox="true" showexportbuttons="false" pagesize="10" createrecords="false" model="Opportunity" mode="read">
+      <skootable showconditions="true" showsavecancel="false" searchmethod="server" searchbox="true" showexportbuttons="true" pagesize="10" createrecords="false" model="Opportunity" mode="readonly">
          <fields>
             <field id="StageName" name="stageName"/>
-            <field id="Amount" name="sumAmount" columnwidth="AVG">
+            <field id="Amount" name="sumAmount" decimalplaces="" valuehalign="" type="">
                <summaries>
                   <summary>sum</summary>
                </summaries>
-               <label>SUM</label>
             </field>
-            <field id="Amount" name="avgAmount"/>
+            <field id="Amount" name="avgAmount" decimalplaces="" valuehalign="" type="">
+               <summaries>
+                  <summary>avg</summary>
+               </summaries>
+            </field>
          </fields>
          <rowactions/>
          <massactions usefirstitemasdefault="true"/>
@@ -54,47 +59,38 @@
             <view type="standard"/>
          </views>
          <filters>
-            <filter type="select" filteroffoptionlabel="Any Close Date" createfilteroffoption="true" condition="CloseDate">
+            <filter type="select" filteroffoptionlabel="All Close Dates" createfilteroffoption="true" affectcookies="true" autocompthreshold="25" conditionsource="manual" labelmode="no" condition="CloseDate">
                <sources>
-                  <source type="manual">
+                  <source type="manual" effectsbehavior="justdefault">
                      <options>
                         <option label="Closed: Last Year" type="simple" value="LAST_YEAR"/>
                         <option label="Closing: This Year" type="simple" value="THIS_YEAR"/>
-                        <option label="Closing: Next 30 Days" type="simple" value="NEXT_N_DAYS:30"/>
-                        <option label="Closing: Next 90 Days" type="simple" value="NEXT_N_DAYS:90"/>
                         <option label="Closing: This Fiscal Quarter" type="simple" value="THIS_FISCAL_QUARTER"/>
+                        <option label="Closing: Next 90 Days" type="simple" value="NEXT_N_DAYS: 90"/>
                      </options>
                   </source>
                </sources>
             </filter>
-            <filter type="select" filteroffoptionlabel="Any Owner" createfilteroffoption="true" condition="OwnerId" label="Owner">
+            <filter type="select" filteroffoptionlabel="All Owners" createfilteroffoption="true" affectcookies="true" autocompthreshold="" conditionsource="manual" labelmode="no" condition="OwnerId">
                <sources>
-                  <source type="model" model="OppOwners">
-                     <valuetemplate>{{Id}}</valuetemplate>
-                     <labeltemplate>Owner: {{Name}}</labeltemplate>
-                  </source>
-                  <source type="manual" model="Opportunity">
+                  <source type="manual" effectsbehavior="justdefault">
                      <options>
                         <option label="My Opportunities" type="complex">
                            <effects>
-                              <effect action="activate" value="" condition="OwnerId_ME"/>
+                              <effect action="activate" value="" condition="MINE"/>
                            </effects>
                         </option>
                      </options>
                   </source>
+                  <source type="model" effectsbehavior="justdefault" model="OppOwners">
+                     <labeltemplate>Owner: {{{Name}}}</labeltemplate>
+                     <valuetemplate>{{Id}}</valuetemplate>
+                  </source>
                </sources>
             </filter>
-            <filter type="select" filteroffoptionlabel="Any Industry" createfilteroffoption="true" condition="Account.Industry">
-               <sources>
-                  <source type="metadata" prefix="Industry: "/>
-               </sources>
-            </filter>
-            <filter type="select" filteroffoptionlabel="Any Stage" createfilteroffoption="true" condition="StageName">
-               <sources>
-                  <source type="metadata"/>
-               </sources>
-            </filter>
-         </filters>
-      </skootable>
-   </components>
-</skuidpage>
+            <filter type="select" filteroffoptionlabel="All Industries" createfilteroffoption="true" affectcookies="true" autocompthreshold="25" conditionsource="auto" conditionfield="Account.Industry" labelmode="no"/>
+         --&gt;</filters>
+            <exportproperties usetablecolumns="true"/>
+         </skootable>
+      </components>
+   </skuidpage>
