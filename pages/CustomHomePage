@@ -1,140 +1,187 @@
-<skuidpage showsidebar="false" showheader="false" tabtooverride="">
-   <resources>
-      <labels/>
-      <javascript>
-         <jsitem location="inline" name="MakeLinksAffectParent">(function(skuid){
-    var $ = skuid.$;
-    $(function(){
-        $('head').append(
-            $('&lt;base target="_parent"&gt;')
-        );
-    });
-})(skuid);</jsitem>
-      </javascript>
-      <css/>
-   </resources>
+<skuidpage unsavedchangeswarning="yes" showsidebar="false" showheader="false" personalizationmode="server">
    <models>
-      <model id="TopOpps" limit="5" query="true" createrowifnonefound="false" orderby="Amount DESC" sobject="Opportunity">
+      <model id="TopOpps" limit="30" query="true" createrowifnonefound="false" sobject="Opportunity" doclone="" type="" orderby="Amount DESC">
          <fields>
-            <field id="Amount"/>
-            <field id="Name"/>
             <field id="CloseDate"/>
-         </fields>
-         <conditions>
-            <condition type="fieldvalue" value="THIS_QUARTER" enclosevalueinquotes="false" field="CloseDate" operator="="/>
-         </conditions>
-      </model>
-      <model id="MyLeads" limit="10" query="true" createrowifnonefound="false" orderby="LastModifiedDate DESC" sobject="Lead">
-         <fields>
+            <field id="StageName"/>
             <field id="Name"/>
-            <field id="Status"/>
-            <field id="LeadSource"/>
-            <field id="Company"/>
-            <field id="CreatedDate"/>
-            <field id="LastModifiedDate"/>
-            <field id="Rating"/>
-            <field id="OwnerId"/>
-            <field id="Owner.Name"/>
-            <field id="Email"/>
-         </fields>
-         <conditions>
-            <condition type="userinfo" value="" field="OwnerId" operator="=" enclosevalueinquotes="true" userinfotype="userid"/>
-            <condition type="fieldvalue" value="Contacted" enclosevalueinquotes="true" field="Status" state="filterableoff" inactive="true" name="Status" operator="!="/>
-            <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="Rating" state="filterableoff" inactive="true" name="Rating"/>
-            <condition type="fieldvalue" value="LAST_N_DAYS:3" enclosevalueinquotes="false" field="LastModifiedDate" state="filterableoff" inactive="true" name="LastModifiedDate"/>
-            <condition type="fieldvalue" value="LAST_N_DAYS:3" enclosevalueinquotes="false" field="CreatedDate" state="filterableoff" inactive="true" name="CreatedDate"/>
-         </conditions>
-      </model>
-      <model id="MyCases" limit="10" query="true" createrowifnonefound="false" orderby="CreatedDate DESC" sobject="Case">
-         <fields>
-            <field id="CreatedDate"/>
-            <field id="SuppliedName"/>
-            <field id="Status"/>
-            <field id="IsClosed"/>
-            <field id="CaseNumber"/>
-            <field id="Subject"/>
-            <field id="OwnerId"/>
-            <field id="Owner.Name"/>
-            <field id="Description"/>
-            <field id="ContactId"/>
-            <field id="Contact.Name"/>
-         </fields>
-         <conditions>
-            <condition type="userinfo" value="" field="OwnerId" operator="=" enclosevalueinquotes="true" userinfotype="userid"/>
-            <condition type="fieldvalue" value="false" enclosevalueinquotes="false" field="IsClosed"/>
-            <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="Status" state="filterableoff" inactive="true" name="Status"/>
-         </conditions>
-      </model>
-      <model id="Tasks" limit="10" query="true" createrowifnonefound="false" orderby="ActivityDate ASC" sobject="Task">
-         <fields>
-            <field id="ActivityDate"/>
-            <field id="CreatedDate"/>
-            <field id="ReminderDateTime"/>
-            <field id="Subject"/>
-            <field id="Description"/>
-            <field id="Status"/>
-            <field id="WhoId"/>
-            <field id="Who.Name"/>
-            <field id="IsClosed"/>
             <field id="AccountId"/>
             <field id="Account.Name"/>
+            <field id="Amount"/>
+         </fields>
+         <conditions>
+            <condition type="fieldvalue" value="THIS_FISCAL_QUARTER" enclosevalueinquotes="false" field="CloseDate"/>
+            <condition type="multiple" field="StageName" operator="in" inactive="true" enclosevalueinquotes="true" name="__autofilter__StageName" state="filterableoff" value=""/>
+         </conditions>
+         <actions/>
+      </model>
+      <model id="Leads" limit="50" query="true" createrowifnonefound="false" sobject="Lead" doclone="" type="" orderby="LastModifiedDate DESC" adapter="">
+         <fields>
+            <field id="FirstName"/>
+            <field id="LastName"/>
+            <field id="Phone"/>
+            <field id="Company"/>
+            <field id="Rating"/>
+            <field id="Name"/>
+            <field id="Status"/>
+            <field id="Id"/>
+         </fields>
+         <conditions>
+            <condition type="userinfo" value="" field="OwnerId" operator="=" enclosevalueinquotes="true" userinfotype="userid" state="" inactive="false"/>
+            <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="Status" state="filterableoff" inactive="true" name="Status1"/>
+            <condition type="fieldvalue" value="Contacted" enclosevalueinquotes="true" field="Status" state="filterableoff" inactive="true" operator="!=" name="Uncontacted"/>
+            <condition type="fieldvalue" value="LAST_N_DAYS:3" enclosevalueinquotes="false" field="LastModifiedDate" state="filterableoff" inactive="true" name="LastModifiedDate"/>
+            <condition type="fieldvalue" value="LAST_N_DAYS:3" enclosevalueinquotes="false" field="CreatedDate" state="filterableoff" inactive="true" name="CreatedDate"/>
+            <condition type="fieldvalue" field="Rating" operator="=" inactive="true" enclosevalueinquotes="true" name="__autofilter__Rating" state="filterableoff" value=""/>
+         </conditions>
+         <actions/>
+      </model>
+      <model id="Tasks" limit="20" query="true" createrowifnonefound="false" adapter="" type="" sobject="Task" orderby="ActivityDate DESC">
+         <fields>
             <field id="WhatId"/>
             <field id="What.Name"/>
-            <field id="Priority"/>
+            <field id="WhoId"/>
+            <field id="Who.Name"/>
+            <field id="Subject"/>
+            <field id="Type"/>
+            <field id="Status"/>
+            <field id="OwnerId"/>
+            <field id="Owner.Name"/>
+            <field id="ActivityDate"/>
+            <field id="IsClosed"/>
+            <field id="Description"/>
          </fields>
          <conditions>
             <condition type="userinfo" value="" field="OwnerId" operator="=" enclosevalueinquotes="true" userinfotype="userid"/>
+            <condition type="fieldvalue" value="false" enclosevalueinquotes="false" field="IsClosed" state="filterableon" inactive="false" name="IsClosed"/>
             <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="Status" state="filterableoff" inactive="true" name="Status"/>
-            <condition type="fieldvalue" value="false" enclosevalueinquotes="false" field="IsClosed"/>
-            <condition type="fieldvalue" value="Completed" enclosevalueinquotes="true" field="Status" operator="!="/>
-            <condition type="fieldvalue" value="" enclosevalueinquotes="true" field="Priority" state="filterableoff" inactive="true" name="Priority"/>
          </conditions>
+         <actions/>
+      </model>
+      <model id="Status" limit="" query="true" createrowifnonefound="false" adapter="" type="aggregate" sobject="Task">
+         <fields/>
+         <conditions>
+            <condition type="fieldvalue" value="false" enclosevalueinquotes="false" field="IsClosed"/>
+         </conditions>
+         <actions/>
+         <groupby method="simple">
+            <field id="Status" name="status"/>
+         </groupby>
       </model>
    </models>
    <components>
-      <tabset>
+      <tabset rememberlastusertab="true" defertabrendering="true" renderas="" uniqueid="sk-PhFeR-102">
          <tabs>
-            <tab name="Top Opportunities This Quarter" icon="ui-silk-money">
+            <tab name="Opportunities Closing This Quarter" icon="sk-icon-opportunities">
                <components>
-                  <skootable showconditions="true" showsavecancel="false" searchmethod="server" searchbox="true" showexportbuttons="true" pagesize="5" createrecords="false" model="TopOpps" mode="read">
+                  <skuidvis__chart model="TopOpps" maintitle="{{Model.labelPlural}}" type="donut" subtitle="Closing This Quarter" uniqueid="sk-PhFeR-103">
+                     <dataaxes>
+                        <axis id="axis1"/>
+                     </dataaxes>
+                     <categoryaxes>
+                        <axis id="categories"/>
+                     </categoryaxes>
+                     <serieslist>
+                        <series valuefield="Amount" splittype="field" aggfunction="sum" splitfield="StageName"/>
+                     </serieslist>
+                     <colors>
+                        <value>#b39ddb</value>
+                        <value>#7986cb</value>
+                        <value>#738ffe</value>
+                        <value>#03a9f4</value>
+                        <value>#5e35b1</value>
+                        <value>#303f9f</value>
+                        <value>#3b50ce</value>
+                        <value>#81d4fa</value>
+                        <value>#9575cd</value>
+                        <value>#5c6bc0</value>
+                        <value>#5677fc</value>
+                        <value>#039be5</value>
+                        <value>#512da8</value>
+                        <value>#283593</value>
+                     </colors>
+                     <legend layout="off" halign="center" valign="bottom" showlabels="false"/>
+                     <allowedtypes>
+                        <type>pie</type>
+                        <type>funnel</type>
+                     </allowedtypes>
+                     <renderconditions logictype="and"/>
+                  </skuidvis__chart>
+                  <skootable showconditions="true" showsavecancel="false" searchmethod="server" searchbox="true" showexportbuttons="true" pagesize="10" createrecords="false" model="TopOpps" buttonposition="" mode="readonly" emptysearchbehavior="query" allowscrollbars="true" uniqueid="sk-PhFeR-104">
                      <fields>
-                        <field id="Name"/>
-                        <field id="Amount">
+                        <field id="Name" valuehalign="" type=""/>
+                        <field id="AccountId" valuehalign="" type=""/>
+                        <field id="Amount" decimalplaces="" valuehalign="" type="">
                            <summaries>
                               <summary>sum</summary>
                               <summary>avg</summary>
                               <summary>max</summary>
                            </summaries>
                         </field>
-                        <field id="CloseDate"/>
+                        <field id="StageName" valuehalign="" type=""/>
+                        <field id="CloseDate" valuehalign="" type=""/>
                      </fields>
                      <rowactions/>
                      <massactions usefirstitemasdefault="true"/>
                      <views>
                         <view type="standard"/>
                      </views>
-                     <actions defaultlabel="Global Actions" defaulticon="ui-silk-wand" usefirstitemasdefault="true"/>
+                     <exportproperties usetablecolumns="true"/>
+                     <searchfields/>
+                     <renderconditions logictype="and"/>
+                     <filters>
+                        <filter type="multiselect" filteroffoptionlabel="Any Stage" createfilteroffoption="true" affectcookies="true" autocompthreshold="25" conditionsource="auto" labelmode="no" conditionfield="StageName" conditionoperator="in"/>
+                     </filters>
                   </skootable>
                </components>
             </tab>
-            <tab name="My Leads" icon="ui-silk-star">
+            <tab name="My Leads" loadlazypanels="true" icon="sk-icon-lead">
                <components>
-                  <skootable showconditions="true" showsavecancel="true" searchmethod="server" searchbox="true" showexportbuttons="false" pagesize="10" createrecords="false" model="MyLeads" mode="read">
+                  <skuidvis__chart model="Leads" maintitle="My {{Model.labelPlural}}" type="donut" uniqueid="sk-PhFeR-105">
+                     <dataaxes>
+                        <axis id="axis1"/>
+                     </dataaxes>
+                     <categoryaxes>
+                        <axis id="categories"/>
+                     </categoryaxes>
+                     <serieslist>
+                        <series valuefield="Id" splittype="field" modelId="Leads" aggfunction="count" splitfield="Rating"/>
+                     </serieslist>
+                     <colors>
+                        <value>#b39ddb</value>
+                        <value>#7986cb</value>
+                        <value>#738ffe</value>
+                        <value>#03a9f4</value>
+                        <value>#5e35b1</value>
+                        <value>#303f9f</value>
+                        <value>#3b50ce</value>
+                        <value>#81d4fa</value>
+                        <value>#9575cd</value>
+                        <value>#5c6bc0</value>
+                        <value>#5677fc</value>
+                        <value>#039be5</value>
+                        <value>#512da8</value>
+                        <value>#283593</value>
+                     </colors>
+                     <legend layout="off" halign="center" valign="bottom" showlabels="false"/>
+                     <allowedtypes>
+                        <type>pie</type>
+                        <type>funnel</type>
+                     </allowedtypes>
+                     <renderconditions logictype="and"/>
+                  </skuidvis__chart>
+                  <skootable showconditions="true" showsavecancel="true" searchmethod="server" searchbox="true" showexportbuttons="false" pagesize="10" createrecords="true" model="Leads" buttonposition="" mode="read" uniqueid="sk-PhFeR-106">
                      <fields>
-                        <field id="Name"/>
-                        <field id="Company"/>
-                        <field id="Email"/>
+                        <field id="FirstName" valuehalign="" type=""/>
+                        <field id="LastName" valuehalign="" type=""/>
+                        <field id="Company" valuehalign="" type=""/>
+                        <field id="Phone" valuehalign="" type=""/>
+                        <field id="Rating" valuehalign="" type=""/>
                         <field id="Status"/>
-                        <field id="LeadSource"/>
-                        <field id="Rating"/>
-                        <field id="LastModifiedDate"/>
-                        <field id="CreatedDate"/>
-                        <field id="OwnerId">
-                           <label>Owner</label>
-                        </field>
                      </fields>
                      <rowactions>
                         <action type="edit"/>
+                        <action type="delete"/>
                      </rowactions>
                      <massactions usefirstitemasdefault="true">
                         <action type="massupdate"/>
@@ -144,24 +191,23 @@
                         <view type="standard"/>
                      </views>
                      <filters>
-                        <filter type="select" filteroffoptionlabel="Any Leads" createfilteroffoption="true" condition="Rating">
+                        <filter type="select" filteroffoptionlabel="Any Status" createfilteroffoption="true" affectcookies="true" autocompthreshold="25" conditionsource="manual" labelmode="no" condition="Status1">
                            <sources>
-                              <source type="manual">
+                              <source type="metadata" effectsbehavior="justdefault" prefix="Status: "/>
+                              <source type="manual" effectsbehavior="justdefault">
                                  <options>
-                                    <option label="Hot" type="simple" value="Hot"/>
-                                    <option label="Warm" type="simple" value="Warm"/>
-                                    <option label="Not Contacted" type="complex">
+                                    <option label="Status: All But Contacted" type="complex">
                                        <effects>
-                                          <effect action="activate" value="" condition="Status"/>
+                                          <effect action="activate" value="" condition="Uncontacted"/>
                                        </effects>
                                     </option>
                                  </options>
                               </source>
                            </sources>
                         </filter>
-                        <filter type="select" filteroffoptionlabel="From Any Date" createfilteroffoption="true">
+                        <filter type="select" filteroffoptionlabel="Any Date" createfilteroffoption="true" affectcookies="true" autocompthreshold="25" conditionsource="manual" labelmode="no" condition="">
                            <sources>
-                              <source type="manual">
+                              <source type="manual" effectsbehavior="justdefault">
                                  <options>
                                     <option label="Recently Modified" type="complex">
                                        <effects>
@@ -177,61 +223,61 @@
                               </source>
                            </sources>
                         </filter>
+                        <filter type="select" filteroffoptionlabel="Any Rating" createfilteroffoption="true" affectcookies="true" autocompthreshold="25" conditionsource="auto" labelmode="auto" conditionfield="Rating"/>
                      </filters>
                   </skootable>
                </components>
             </tab>
-            <tab name="My Unclosed Cases" icon="ui-silk-bug">
+            <tab name="My Open Tasks" loadlazypanels="true" icon="sk-icon-activities">
                <components>
-                  <skootable showconditions="true" showsavecancel="true" searchmethod="server" searchbox="true" showexportbuttons="false" pagesize="10" createrecords="false" model="MyCases" mode="read">
+                  <skootable showconditions="true" showsavecancel="true" showerrorsinline="true" searchmethod="server" searchbox="true" showexportbuttons="false" pagesize="10" createrecords="true" model="Tasks" buttonposition="" mode="read" uniqueid="sk-Q5Klg-238">
                      <fields>
-                        <field id="CaseNumber"/>
+                        <field id="Subject" valuehalign="" type=""/>
+                        <field id="Type" valuehalign="" type=""/>
                         <field id="Status"/>
-                        <field id="ContactId">
+                        <field id="ActivityDate" valuehalign="" type="">
+                           <label>Due</label>
+                        </field>
+                        <field type="COMBO" valuehalign="">
                            <label>Related To</label>
-                        </field>
-                        <field id="Subject"/>
-                        <field id="CreatedDate"/>
-                     </fields>
-                     <rowactions>
-                        <action type="edit"/>
-                     </rowactions>
-                     <massactions usefirstitemasdefault="true">
-                        <action type="massupdate"/>
-                     </massactions>
-                     <views>
-                        <view type="standard"/>
-                     </views>
-                     <filters>
-                        <filter type="select" filteroffoptionlabel="Any Status" createfilteroffoption="true" condition="Status">
-                           <sources>
-                              <source type="metadata"/>
-                           </sources>
-                        </filter>
-                     </filters>
-                  </skootable>
-               </components>
-            </tab>
-            <tab name="My Tasks" icon="ui-silk-tick">
-               <components>
-                  <skootable showconditions="true" showsavecancel="true" searchmethod="server" searchbox="true" showexportbuttons="false" pagesize="10" createrecords="true" model="Tasks" mode="read">
-                     <fields>
-                        <field id="Subject"/>
-                        <field id="WhoId">
-                           <label>Contact/Lead</label>
-                        </field>
-                        <field id="WhatId">
-                           <label>Opportunity/Account</label>
-                        </field>
-                        <field id="Status"/>
-                        <field id="Priority"/>
-                        <field id="ActivityDate">
-                           <label>Due Date</label>
+                           <template>{{WhatId}}{{#WhatId}}{{#WhoId}}, {{/WhoId}}{{/WhatId}}{{WhoId}}</template>
                         </field>
                      </fields>
                      <rowactions>
                         <action type="edit"/>
                         <action type="delete"/>
+                        <action type="multi" label="Mark Completed" icon="sk-icon-mark-completed">
+                           <actions>
+                              <action type="updateRow" fieldmodel="Tasks" field="Status" enclosevalueinquotes="true" value="Completed"/>
+                              <action type="save">
+                                 <models>
+                                    <model>Tasks</model>
+                                 </models>
+                              </action>
+                              <action type="requeryModel" model="Tasks" behavior="standard"/>
+                           </actions>
+                        </action>
+                        <action type="drawer" label="View Details" icon="fa-folder" openicon="fa-folder-open">
+                           <drawer title="Drawer Area" width="90%" closehandle="true">
+                              <components>
+                                 <basicfieldeditor showheader="true" showsavecancel="false" showerrorsinline="true" model="Tasks" buttonposition="" uniqueid="sk-QBsmP-321" mode="edit" layout="above">
+                                    <columns>
+                                       <column width="100%">
+                                          <sections>
+                                             <section title="Description" collapsible="no">
+                                                <fields>
+                                                   <field id="Description" valuehalign="" type="">
+                                                      <label> </label>
+                                                   </field>
+                                                </fields>
+                                             </section>
+                                          </sections>
+                                       </column>
+                                    </columns>
+                                 </basicfieldeditor>
+                              </components>
+                           </drawer>
+                        </action>
                      </rowactions>
                      <massactions usefirstitemasdefault="true">
                         <action type="massupdate"/>
@@ -241,14 +287,12 @@
                         <view type="standard"/>
                      </views>
                      <filters>
-                        <filter type="select" filteroffoptionlabel="Any Priority" createfilteroffoption="true" condition="Priority">
+                        <filter type="select" filteroffoptionlabel="Any Status" createfilteroffoption="true" affectcookies="true" autocompthreshold="25" conditionsource="manual" conditionfield="Status" labelmode="no" condition="Status">
                            <sources>
-                              <source type="metadata"/>
-                           </sources>
-                        </filter>
-                        <filter type="select" filteroffoptionlabel="Any Status" createfilteroffoption="true" condition="Status">
-                           <sources>
-                              <source type="metadata"/>
+                              <source type="model" effectsbehavior="justdefault" model="Status">
+                                 <labeltemplate>{{{status}}}</labeltemplate>
+                                 <valuetemplate>{{{status}}}</valuetemplate>
+                              </source>
                            </sources>
                         </filter>
                      </filters>
@@ -258,4 +302,25 @@
          </tabs>
       </tabset>
    </components>
+   <resources>
+      <labels/>
+      <javascript>
+         <jsitem location="inline" name="OpenLinksinParentWindow" cachelocation="false" url="">(function(skuid){
+	var $ = skuid.$;
+	$(function(){
+		$('head').append(
+		    $('&lt;base target="_parent"&gt;')
+		    );
+	});
+})(skuid);</jsitem>
+      </javascript>
+      <css>
+         <cssitem location="inline" name="FontSize" cachelocation="false">body { 
+    font-size: 75%;
+    }</cssitem>
+      </css>
+   </resources>
+   <styles>
+      <styleitem type="background" bgtype="none"/>
+   </styles>
 </skuidpage>
